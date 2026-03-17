@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Reported Speech Quiz</title>
+<style>
+body {margin:0;font-family:Arial;background:linear-gradient(120deg,#667eea,#764ba2);}
+.container {display:flex;height:100vh;}
+.left {width:65%;padding:30px;}
+.right {width:35%;background:white;padding:20px;overflow-y:auto;}
+.quiz-box {background:white;padding:25px;border-radius:15px;box-shadow:0 0 20px rgba(0,0,0,0.3);}
+button {padding:10px 15px;margin:5px;border:none;border-radius:8px;cursor:pointer;}
+.option-btn {background:#6c5ce7;color:white;}
+.option-btn:hover {background:#4834d4;}
+.nav-btn {background:#00b894;color:white;}
+.correct {color:green;}
+.wrong {color:red;}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="left">
+<div class="quiz-box">
+<h2>📘 Reported Speech Quiz</h2>
+<div id="questionBox"></div>
+<div id="feedback"></div>
+
+<button class="nav-btn" onclick="prevQuestion()">Previous</button>
+<button class="nav-btn" onclick="nextQuestion()">Next</button>
+
+<h3 id="score"></h3>
+</div>
+</div>
+
+<div class="right">
+<h3>📝 Answer Review</h3>
+<div id="reviewBox"></div>
+</div>
+
+</div>
+
+<script>
+
+const questions = [
+{"question": 'He said, "I am happy."', "options": ["He said that he was happy.", "He said that he is happy."], "answer": 0},
+{"question": 'She said, "I have lost my keys."', "options": ["She said that she had lost her keys.", "She said that she has lost her keys."], "answer": 0},
+{"question": 'They said, "We are going home."', "options": ["They said that they were going home.", "They said that they are going home."], "answer": 0},
+{"question": 'He said, "I will help you."', "options": ["He said that he would help me.", "He said that he will help you."], "answer": 0},
+{"question": 'She said, "I can swim."', "options": ["She said that she could swim.", "She said that she can swim."], "answer": 0},
+{"question": 'John said, "I went to school."', "options": ["John said that he had gone to school.", "John said that he has gone to school."], "answer": 0},
+{"question": 'The teacher said, "Water boils at 100°C."', "options": ["The teacher said that water boiled at 100°C.", "The teacher said that water boils at 100°C."], "answer": 1},
+{"question": 'She said, "I am studying."', "options": ["She said that she was studying.", "She said that she is studying."], "answer": 0},
+{"question": 'He said, "We have completed the work."', "options": ["He said that they had completed the work.", "He said that they have completed the work."], "answer": 0},
+{"question": 'She said, "I was tired."', "options": ["She said that she had been tired.", "She said that she was tired."], "answer": 1},
+
+{"question": 'He said, "I am learning Python programming."', "options": ["He said that he was learning Python programming.", "He said that he is learning Python programming."], "answer": 0},
+{"question": 'She said, "I finished my assignment yesterday."', "options": ["She said that she had finished her assignment the previous day.", "She said that she finished her assignment yesterday."], "answer": 0},
+{"question": 'They said, "We will submit the project tomorrow."', "options": ["They said that they would submit the project the next day.", "They said that they will submit the project tomorrow."], "answer": 0},
+{"question": 'He said, "I can solve this coding problem easily."', "options": ["He said that he could solve that coding problem easily.", "He said that he can solve this coding problem easily."], "answer": 0},
+{"question": 'She said, "I am reading a novel."', "options": ["She said that she was reading a novel.", "She said that she is reading a novel."], "answer": 0},
+
+{"question": 'He said, "I have completed my homework."', "options": ["He said that he had completed his homework.", "He said that he has completed his homework."], "answer": 0},
+{"question": 'They said, "We will attend the meeting."', "options": ["They said that they would attend the meeting.", "They said that they will attend the meeting."], "answer": 0},
+{"question": 'She said, "I can drive a car."', "options": ["She said that she could drive a car.", "She said that she can drive a car."], "answer": 0},
+{"question": 'He said, "I was playing cricket."', "options": ["He said that he had been playing cricket.", "He said that he was playing cricket."], "answer": 1},
+{"question": 'She said, "I may buy a dress."', "options": ["She said that she might buy a dress.", "She said that she may buy a dress."], "answer": 0},
+
+{"question": 'They said, "We are watching TV."', "options": ["They said that they were watching TV.", "They said that they are watching TV."], "answer": 0},
+{"question": 'He said, "I must finish this work."', "options": ["He said that he had to finish that work.", "He said that he must finish this work."], "answer": 0},
+{"question": 'She said, "I have been waiting for you."', "options": ["She said that she had been waiting for me.", "She said that she has been waiting for you."], "answer": 0},
+{"question": 'He said, "I will travel tomorrow."', "options": ["He said that he would travel the next day.", "He said that he will travel tomorrow."], "answer": 0},
+{"question": 'She said, "I do not understand this lesson."', "options": ["She said that she did not understand that lesson.", "She said that she does not understand this lesson."], "answer": 0}
+];
+
+let current = 0;
+let userAnswers = new Array(questions.length).fill(null);
+
+function loadQuestion(){
+    const q = questions[current];
+    let html = `<p><b>Question ${current+1} of ${questions.length}</b></p>`;
+    html += `<p>${q.question}</p>`;
+    q.options.forEach((opt,i)=>{
+        html += `<button class="option-btn" onclick="selectAnswer(${i})">${opt}</button><br><br>`;
+    });
+    document.getElementById("questionBox").innerHTML = html;
+    document.getElementById("feedback").innerHTML = "";
+}
+
+function selectAnswer(choice){
+    userAnswers[current]=choice;
+    const correct = questions[current].answer;
+
+    if(choice===correct){
+        document.getElementById("feedback").innerHTML="<p class='correct'>✔ Correct!</p>";
+    }else{
+        document.getElementById("feedback").innerHTML=
+        "<p class='wrong'>❌ Wrong!</p><p class='correct'>Correct Answer: "+
+        questions[current].options[correct]+"</p>";
+    }
+
+    updateReview();
+}
+
+function updateReview(){
+    let review="";
+    questions.forEach((q,i)=>{
+        if(userAnswers[i]!==null){
+            review += userAnswers[i]===q.answer ?
+            `<p class='correct'>Q${i+1}: ✔</p>` :
+            `<p class='wrong'>Q${i+1}: ❌</p>`;
+        }
+    });
+
+    document.getElementById("reviewBox").innerHTML = review;
+
+    let score = userAnswers.filter((a,i)=>a===questions[i].answer).length;
+    document.getElementById("score").innerHTML = "🎯 Score: " + score + " / " + questions.length;
+}
+
+function nextQuestion(){ if(current<questions.length-1){ current++; loadQuestion(); } }
+function prevQuestion(){ if(current>0){ current--; loadQuestion(); } }
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
